@@ -40,7 +40,5 @@ router.get('/storage/:key', function (req, res) {
 
 app.use('/api', router);
 
-
 app.listen(port, ipaddress);
 console.log('Magic happens on port ' + port);
-
