@@ -13,6 +13,12 @@ mkdirp(storageFolder);
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(bodyParser.json());
 
+app.all('/', function(req, res, next) {
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header("Access-Control-Allow-Headers", "X-Requested-With");
+  next();
+ });
+ 
 var router = express.Router();
 
 var getFilePath = function (key) {
