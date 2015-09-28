@@ -12,12 +12,6 @@ mkdirp(storageFolder);
 
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(bodyParser.json());
-
-app.all('/', function(req, res, next) {
-  res.header("Access-Control-Allow-Origin", "*");
-  res.header("Access-Control-Allow-Headers", "X-Requested-With");
-  next();
- });
  
 var router = express.Router();
 
@@ -25,7 +19,12 @@ var getFilePath = function (key) {
     return storageFolder + '/' + encodeURIComponent(key);
 };
 
+var allowCors(res){
+    res.header("Access-Control-Allow-Origin", "*");
+    res.header("Access-Control-Allow-Headers", "X-Requested-With");
+};
 router.get('/storage/:key', function (req, res) {
+		allowCors(res);
     var filePath = getFilePath(req.params.key);
     if (fs.existsSync(filePath)) {
         var content = fs.readFileSync(filePath, 'utf8');
@@ -33,6 +32,7 @@ router.get('/storage/:key', function (req, res) {
     } else
         res.json({success: false});
 }).post('/storage/:key', function (req, res) {
+    allowCors(res);
     var filePath = getFilePath(req.params.key);
     fs.writeFileSync(filePath, req.body.content);
     res.json({success: true});
