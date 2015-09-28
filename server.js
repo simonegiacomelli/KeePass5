@@ -19,7 +19,7 @@ var getFilePath = function (key) {
     return storageFolder + '/' + encodeURIComponent(key);
 };
 
-var allowCors(res){
+var allowCors= function(res){
     res.header("Access-Control-Allow-Origin", "*");
     res.header("Access-Control-Allow-Headers", "X-Requested-With");
 };
