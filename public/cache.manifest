@@ -1,0 +1,16 @@
+CACHE MANIFEST
+# rev 12
+keepass5.js
+sjcl.js
+angular.js
+app.js
+index.html
+jquery.min.js
+favicon.ico
+bootstrap/js/bootstrap.min.js
+bootstrap/css/bootstrap.min.css
+bootstrap/fonts/glyphicons-halflings-regular.eot
+bootstrap/fonts/glyphicons-halflings-regular.svg
+bootstrap/fonts/glyphicons-halflings-regular.ttf
+bootstrap/fonts/glyphicons-halflings-regular.woff
+bootstrap/fonts/glyphicons-halflings-regular.woff2

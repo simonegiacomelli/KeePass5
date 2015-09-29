@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html ng-app="keepass5" manifest="cache.manifest">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+    <link rel="icon" href="favicon.ico">
+    <script type="text/javascript" src="angular.js"></script>
+
+    <title>KeePass5 1.3.1</title>
+
+    <link href="bootstrap/css/bootstrap.min.css" rel="stylesheet">
+</head>
+
+<body ng-controller="StartupController">
+
+<!-- Fixed navbar -->
+<nav class="navbar navbar-default navbar-fixed-top">
+    <div class="container">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar"
+                    aria-expanded="false" aria-controls="navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="#">KeePass5</a>
+        </div>
+        <div id="navbar" class="navbar-collapse collapse">
+            <ul class="nav navbar-nav">
+                <li><a href="#" ng-click="nav.show('home')">Accedi</a></li>
+                <li><a href="#about" ng-click="nav.show('showHelp')">Aiuto</a></li>
+                <li><a href="#" ng-show="nav.showIfState('home/showDb')" ng-cloak ng-click="nav.show('home/unlockDb')">Esci</a>
+                </li>
+                <li class="dropdown" ng-show="nav.showIfState('home/showDb')" ng-cloak>
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
+                       aria-expanded="false">Opzioni<span class="caret"></span></a>
+                    <ul class="dropdown-menu">
+                        <li><a href="#" ng-click="nav.show('changePassword')">Cambia master password</a></li>
+                        <!--<li role="separator" class="divider"></li>-->
+                        <li><a href="#" ng-click="activateDownloadPassword()">Genera file password</a></li>
+                        <li><a href="#" ng-click="activateUploadPassword()">Carica file password</a></li>
+                        <!--<li role="separator" class="divider"></li>-->
+                        <li><a href="#" ng-click="nav.show('exchangeServer/upload')">Salva sul server</a></li>
+                        <li><a href="#" ng-click="nav.show('exchangeServer/download')">Scarica dal server</a></li>
+                        <!--<li role="separator" class="divider"></li>-->
+                        <li><a href="#" ng-click="removeDb()">Elimina archivio dal dispositivo</a></li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<div class="container" ng-cloak>
+
+    <br>
+
+    <div class="page-header" ng-show="nav.showIf('showHelp')">
+
+        <p>
+            Questo è un programma che immagazzina tutte le tue password in un unico archivio.
+            Tale archivio risiede nel tuo dispositivo ed è reso sicuro grazie alla
+            <a href="https://it.wikipedia.org/wiki/Crittografia"
+               target="_blank">crittografia</a> AES.
+            <br>La prima cosa che ti viene chiesta è di inserire una 'master' password, quella parola di accesso
+            che ti permetter&agrave; di entrare nel tuo caveau.
+            <br>Lì potrai memorizzare con sicurezza tutte le tue credenziali di accesso di qualsiasi sito web o servizio tu voglia.
+        </p>
+
+        <p>
+            Se hai precedentemente salvato un file del tuo archvio ora puoi
+            <a href="#" ng-click="activateUploadPassword()">caricare un file password.</a>
+            <br>Ma, attenzione, se ne hai uno, sovrascriverai il tuo archivio corrente!</p>
+        <p>
+            Non ti ricordi piu' la password? Purtroppo con l'utilizzo della crittografia non c'è modo di recuperarla!
+            Hei, puoi sempre <a href="#" ng-click="removeDb()">eliminare l'archivio dal dispositivo</a>
+        </p>
+        <p>
+            Quando avrai fatto l'accesso al tuo archivio ti sara' possibile caricarlo sul server.
+            <br>In questo modo potrai metterlo sui altri tuoi dispositivi in tutta sicurezza.
+            <br>Oppure lo potrai condividere con altri.
+            <br>Il file caricato e' protetto sempre con la crittografia e l'unico modo per aprirlo e' conoscere la master password.
+            <br>Se conosci la cartella in cui e' stato caricato puoi <a href="#" ng-click="nav.show('exchangeServer/download')">scaricare un archvio</a> subito
+
+        </p>
+        <p>
+            Oppure, torna <a href="#" ng-click="nav.show('home')">al tuo caveau</a>
+        </p>
+    </div>
+    <form class="page-header"
+          name="createDbForm"
+          ng-show="nav.showIf('home/createDb')"
+          ng-controller="CreateDbController"
+          ng-submit="createDb()" novalidate>
+
+        <h1>Crea il tuo nuovo caveau di password</h1>
+        <br>
+        <input type="password" ng-model="password" required
+                placeholder="Master password"><br>
+        <input type="submit" value="Crea">
+        <br><br>
+        Non sai di cosa si sta parlando? <br>Niente paura!
+        <a href="#about" ng-click="nav.show('showHelp')">Ti aiutiamo noi.</a>
+
+    </form>
+    <form class="page-header"
+          name="changePasswordForm"
+          ng-show="nav.showIf('changePassword')"
+          ng-controller="ChangePasswordController"
+          ng-submit="changePassword()" novalidate>
+
+        <h1>Cambia la master password</h1>
+
+        <input type="password" ng-model="password" required placeholder="Nuova password"><br>
+        <input type="submit" value="Cambia">
+        <input type="button" value="Annulla" ng-click="nav.show('home/showDb')">
+    </form>
+
+    <div class="page-header"
+         ng-show="nav.showIf('home/showDb')"
+         ng-controller="ShowDbController">
+        <br>
+
+
+        <input type="search" ng-model="searchString"
+               class="form-control"
+               placeholder="Cerca nel titolo/commento voce"
+               ng-show="canSearch()">
+
+        <div ng-show="inviteUserToAdd()">Non ci sono ancora voci nel tuo caveau di password. Aggiungi la prima!</div>
+        <br>
+        <input type="button" ng-click="newEntry()" value="Crea nuova voce" ng-show="mode == 'browse'">
+
+        <table class="table table-condensed" ng-show="hasEntriesToShow() && mode === 'browse'">
+            <thead>
+            <tr>
+                <th>Titolo</th>
+                <th>Username</th>
+            </tr>
+            </thead>
+            <tbody ng-repeat="entry in entries()" ng-click="editEntry(entry)">
+            <tr>
+                <td>{{entry.title}}&nbsp;</td>
+                <td>{{entry.username}}</td>
+            </tr>
+            </tbody>
+        </table>
+
+        <form name="saveEntryForm"
+              ng-submit="saveEntry()"
+              ng-hide="mode === 'browse'"
+              novalidate>
+            <input type="submit" value="{{buttonCaption}}">
+            <input type="button" value="Elimina voce" ng-show="mode === 'edit'"
+                   ng-click="deleteEntry()">
+            <input type="button" value="Annulla"
+                   ng-click="clearSaveEntryForm()">
+            <br>
+
+
+            <input type="text" ng-model="entry.title" required
+                   class="form-control" placeholder="Titolo" id="inputTitle">
+            <input type="text" ng-model="entry.username"
+                   class="form-control" placeholder="Username">
+            <input type="text" ng-model="entry.password"
+                   class="form-control" placeholder="Password">
+
+            <div class="input-group">
+                <input type="text" ng-model="entry.url"
+                       class="form-control" placeholder="Indirizzo sito web" aria-describedby="basic-addon2">
+                <span class="input-group-addon" id="basic-addon2">
+                    <a ng-href="{{sanitizeUrl(entry.url)}}" target="_blank">apri sito web</a></span>
+            </div>
+
+            <input type="text" ng-model="entry.comment"
+                   class="form-control" placeholder="commento">
+
+        </form>
+    </div>
+    <form class="page-header"
+          name="uploadPasswordForm"
+          ng-show="nav.showIf('uploadPassword')"
+          ng-controller="UploadPasswordController"
+          novalidate>
+        <br>
+        Se hai precedentemente salvato un file del tuo archvio ora lo potrai ripristinare.<br>
+        Ricorda pero', verranno eliminate tutte le password presenti ora.
+        <br><br>
+        <input type="file" id="input-file" name="file" onchange="angular.element(this).scope().uploadPassword(this)"/>
+    </form>
+
+    <form class="page-header"
+          name="unlockDbForm"
+          ng-show="nav.showIf('home/unlockDb')"
+          ng-controller="UnlockDbController"
+          ng-submit="unlockDb()" novalidate>
+        <br>
+
+        <h1>Apri il tuo caveau</h1>
+
+        <input type="password" ng-model="password" required
+               placeholder="Master password"><br>
+        <input type="submit" value="Apri">
+        <br><br>
+        Non sai di cosa si sta parlando? <br>Niente paura!
+        <a href="#about" ng-click="nav.show('showHelp')">Ti aiutiamo noi.</a>
+    </form>
+
+    <form class="page-header"
+          name="exchangeServerUploadForm"
+          ng-show="nav.showIf('exchangeServer/upload')"
+          ng-controller="ExchangeServerUploadController"
+          ng-submit="upload()" novalidate>
+        <br>
+
+        <h1>Salva sul server</h1>
+
+        <input type="text" ng-model="folder" required
+               placeholder="Nome cartella"><br>
+        <input type="submit" value="Salva sul server">
+        <br><br>
+        Attraverso questa funzionalita' puoi salvare il tuo archivio in una cartella sul server.
+    </form>
+
+    <form class="page-header"
+          name="exchangeServerDownloadForm"
+          ng-show="nav.showIf('exchangeServer/download')"
+          ng-controller="ExchangeServerDownloadController"
+          ng-submit="download()" novalidate>
+        <br>
+
+        <h1>Scarica dal server</h1>
+
+        <input type="text" ng-model="folder" required
+               placeholder="Nome cartella"><br>
+        <input type="submit" value="Scarica dal server">
+        <br><br>
+        Attraverso questa funzionalita' puoi scaricare un archivio dal server.
+        <br>Attenzione! Cosi' facendo eliminerai quello sul tuo dispositivo.
+    </form>
+
+</div>
+
+<script src="sjcl.js"></script>
+<script src="keepass5.js"></script>
+<script src="app.js"></script>
+
+<script src="jquery.min.js"></script>
+<script src="bootstrap/js/bootstrap.min.js"></script>
+<script>
+    $(document).on('click', '.navbar-collapse.in', function (e) {
+        if ($(e.target).is('a') && $(e.target).attr('class') != 'dropdown-toggle') {
+            $(this).collapse('hide');
+        }
+    });
+</script>
+</body>
+</html>

@@ -12,6 +12,7 @@ mkdirp(storageFolder);
 
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(bodyParser.json());
+app.use(express.static('public'));
  
 var router = express.Router();
 
@@ -23,6 +24,7 @@ var allowCors= function(res){
     res.header("Access-Control-Allow-Origin", "*");
     res.header("Access-Control-Allow-Headers", "X-Requested-With");
 };
+
 router.get('/storage/:key', function (req, res) {
 		allowCors(res);
     var filePath = getFilePath(req.params.key);

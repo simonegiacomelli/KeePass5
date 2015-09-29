@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html ng-app="keepass5" manifest-off="cache.manifest">
+<head>
+    <title>KeePass5 1.1</title>
+    <script type="text/javascript" src="angular.js"></script>
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1, minimum-scale=0.1"/>
+</head>
+
+<body>
+<div ng-controller="startupController" ng-cloak>
+    show={{show}} <br>
+
+    <form name="createDbForm"
+          ng-show="show == 'createDb'"
+          ng-controller="CreateDbController"
+          ng-submit="createDb()" novalidate>
+        <div style="text-align: center">
+            Create your new<br>
+            password caveau<br>
+            Insert master password<br>
+
+            <input type="password" ng-model="password" required><br>
+            <input type="submit"><br>
+            valid: {{createDbForm.$valid}}
+        </div>
+    </form>
+    <form name="unlockDbForm"
+          ng-show="show == 'unlockDb'"
+          ng-controller="UnlockDbController"
+          ng-submit="unlockDb()" novalidate>
+        <div style="text-align: center">
+            Unlock your caveau<br>
+            <input type="password" ng-model="password" required><br>
+            <input type="submit"><br>
+            valid: {{unlockDbForm.$valid}}
+            <input type="button" ng-click="removeDb()" value="Rimuovi caveau">
+        </div>
+    </form>
+    <div ng-show="show == 'showDb'"
+         ng-controller="ShowDbController">
+
+        <ul class="menu-items jsDropdownMenuItems">
+            <li ng-repeat="item in items()">
+                <p>{{item.name}}</p>
+
+                <p>&times; <strong>{{item.comment}}</strong></p>
+            </li>
+        </ul>
+
+        <form name="addEntryForm"
+              ng-submit="addEntry()" novalidate>
+            name:
+            <input type="text" ng-model="name" required><br>
+            <input type="submit"><br>
+        </form>
+
+        <input type="button" ng-click="removeDb()" value="Rimuovi caveau - show">
+    </div>
+</div>
+<script src="sjcl.js"></script>
+<script src="keepass5.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
