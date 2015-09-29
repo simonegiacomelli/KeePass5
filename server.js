@@ -12,7 +12,6 @@ mkdirp(storageFolder);
 
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(bodyParser.json());
-app.use(express.static('public'));
  
 var router = express.Router();
 
@@ -41,6 +40,7 @@ router.get('/storage/:key', function (req, res) {
 });
 
 app.use('/api', router);
+app.use(express.static('public'));
 
 app.listen(port, ipaddress);
 console.log('Magic happens on port ' + port);
