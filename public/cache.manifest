@@ -3,6 +3,7 @@ CACHE MANIFEST
 keepass5.js
 sjcl.js
 angular.js
+angular.min.js
 app.js
 jquery.min.js
 favicon.ico
