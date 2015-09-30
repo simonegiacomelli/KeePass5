@@ -39,9 +39,9 @@ router.get('/storage/:key', function (req, res) {
     res.json({success: true});
 });
 
-app.get('/', function (req, res) {
-  res.redirect('index.html');
-})
+//app.get('/', function (req, res) {
+//  res.redirect('index.html');
+//})
 
 app.use('/api', router);
 app.use(express.static('public'));
