@@ -1,10 +1,9 @@
 CACHE MANIFEST
-# rev 15
+# rev 4
 keepass5.js
 sjcl.js
 angular.js
 app.js
-index.html
 jquery.min.js
 favicon.ico
 bootstrap/js/bootstrap.min.js
